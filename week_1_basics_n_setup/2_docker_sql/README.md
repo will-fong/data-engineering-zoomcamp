@@ -7,7 +7,7 @@ Notes I used for preparing the videos: [link](https://docs.google.com/document/d
 
 All the commands from the video
 
-Downloading the data
+Downloading the data (Linux only)
 
 ```bash
 wget https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2021-01.csv
@@ -20,12 +20,12 @@ wget https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2021-01.csv
 Running postgres on windows (note the full path)
 
 ```bash
-docker run -it \
-  -e POSTGRES_USER="root" \
-  -e POSTGRES_PASSWORD="root" \
-  -e POSTGRES_DB="ny_taxi" \
-  -v c:/Users/alexe/git/data-engineering-zoomcamp/week_1_basics_n_setup/2_docker_sql/ny_taxi_postgres_data:/var/lib/postgresql/data \
-  -p 5432:5432 \
+docker run -it ^
+  -e POSTGRES_USER="root" ^
+  -e POSTGRES_PASSWORD="root" ^
+  -e POSTGRES_DB="ny_taxi" ^
+  -v "C:\Users\[insert full path here]data-engineering-zoomcamp\week_1_basics_n_setup\2_docker_sql\ny_taxi_postgres_data":/var/lib/postgresql/data ^
+  -p 5432:5432 ^
   postgres:13
 ```
 
