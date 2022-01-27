@@ -157,7 +157,7 @@ docker run -it ^
 Running locally
 
 ```bash
-URL="https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2021-01.csv"
+URL="https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2021-01.csv" ^
 
 python ingest_data.py ^
   --user=root ^
@@ -212,13 +212,7 @@ Shutting it down:
 docker-compose down
 ```
 
-Note: to make pgAdmin configuration persistent, create a folder `data_pgadmin`. Change its permission via
-
-```bash
-sudo chown 5050:5050 data_pgadmin
-```
-
-and mount it to the `/var/lib/pgadmin` folder:
+Note: to make pgAdmin configuration persistent, mount a volume to the `/var/lib/pgadmin` folder:
 
 ```yaml
 services:
