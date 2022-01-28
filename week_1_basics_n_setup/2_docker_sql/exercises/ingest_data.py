@@ -77,10 +77,10 @@ if __name__ == '__main__':
     parser.add_argument('--port', help='This is the port for PostgreSQL')
     parser.add_argument('--database', help='This is the database name for PostgreSQL')
     parser.add_argument('--table', help='This is the table name for PostgreSQL')
+    parser.add_argument('--url', help='This is the URL for the csv for PostgreSQL')
 
     # %%
     args = parser.parse_args()
-    print(args.accumulate(args.integers))
 
     # %%
     main(args)

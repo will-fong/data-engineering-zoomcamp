@@ -48,7 +48,7 @@ docker: Error response from daemon: invalid mode: ^Program Files\Git\var\lib\pos
 See 'docker run --help'.
 ```
 
-Change the mouning path. Replace it with the following:
+Change the mounting path. Replace it with the following:
 
 ```
 -p /e/zoomcamp/...:/var/lib/postgresql/data
@@ -167,6 +167,17 @@ python ingest_data.py ^
   --db=ny_taxi ^
   --table_name=yellow_taxi_trips ^
   --url=${URL}
+```
+
+```bash
+python ingest_data.py ^
+  --user=root ^
+  --password=root ^
+  --host=localhost ^
+  --port=5432 ^
+  --database=ny_taxi ^
+  --table=yellow_taxi_trips ^
+  --url="https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2021-01.csv"
 ```
 
 Build the image
