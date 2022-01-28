@@ -23,7 +23,7 @@ def main(params):
 
     csv = 'output.csv'
 
-    os.system(f'wget {url} -O {csv}')
+    os.system(f"wget {url} -O {csv}")
 
     # %%
     engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{database}')
