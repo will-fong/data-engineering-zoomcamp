@@ -154,6 +154,20 @@ docker run -it ^
 
 ### Data ingestion
 
+PowerShell (Windows)
+
+No URL is specified and as such the CSV must be manually downloaded and renamed to output.csv
+
+```bash
+python ingest_data.py `
+  --user=root `
+  --password=root `
+  --host=localhost `
+  --port=5432 `
+  --database=ny_taxi `
+  --table=yellow_taxi_trips
+```
+
 Running locally
 
 ```bash
@@ -168,6 +182,8 @@ python ingest_data.py ^
   --table_name=yellow_taxi_trips ^
   --url=${URL}
 ```
+
+Command Prompt (Windows)
 
 ```bash
 python ingest_data.py ^
@@ -237,4 +253,96 @@ services:
 
 ### SQL 
 
-Coming soon!
+1. Combine the trips and zones data to collect details about trips and their pickup and dropoff locations.
+```
+SELECT 
+  trips.tpep_pickup_datetime
+  , trips.tpep_dropoff_datetime
+  , trips.total_amount
+  , trips."PULocationID"
+  , trips."DOLocationID"
+  , CONCAT(pickup."Borough", ' ', pickup."Zone") AS pickup_location
+  , CONCAT(dropoff."Borough", ' ', dropoff."Zone") AS dropoff_location
+FROM
+  yellow_taxi_trips trips
+  , zones pickup
+  , zones dropoff
+WHERE
+  1 = 1
+  AND trips."PULocationID" = pickup."LocationID"
+  AND trips."DOLocationID" = dropoff."LocationID"
+LIMIT 100
+;
+```
+
+Note that this does not use a left join and will not account for any discrepancies between the zones in the trips table and the zones in the zones table.
+
+2. Validate data integrity by checking if there are any zones in the trips data that are not in the zones data. 
+```
+SELECT 
+  trips.tpep_pickup_datetime
+  , trips.tpep_dropoff_datetime
+  , trips.total_amount
+  , trips."PULocationID"
+  , trips."DOLocationID"
+FROM
+  yellow_taxi_trips trips
+WHERE
+  1 = 1
+  AND "DOLocationID" NOT IN (
+  	SELECT "LocationID" FROM zones
+  )
+;
+```
+
+```
+SELECT 
+  trips.tpep_pickup_datetime
+  , trips.tpep_dropoff_datetime
+  , trips.total_amount
+  , trips."PULocationID"
+  , trips."DOLocationID"
+FROM
+  yellow_taxi_trips trips
+WHERE
+  1 = 1
+  AND "PULocationID" NOT IN (
+  	SELECT "LocationID" FROM zones
+  )
+;
+```
+
+3. Return the trip counts by date.
+```
+SELECT
+  CAST(tpep_dropoff_datetime AS DATE) AS date
+  , COUNT(*) AS trips
+FROM
+  yellow_taxi_trips trips
+GROUP BY
+  date
+ORDER BY
+  date ASC  
+```
+
+What if we wanted to return the specific zones and metric associated?
+```
+SELECT
+  CAST(trips.tpep_dropoff_datetime AS DATE) date
+  , trips."DOLocationID"
+  , zones."Zone"
+  , COUNT(*) total_trips
+  , MAX(trips.total_amount) max_total_amount
+  , MAX(trips.passenger_count) max_passenger_count
+FROM
+  yellow_taxi_trips trips
+  LEFT JOIN zones
+  ON trips."DOLocationID" = zones."LocationID"
+GROUP BY
+  1, 2, 3
+ORDER BY
+  1 ASC
+  , 2 ASC
+  , 4 DESC
+  , 5 ASC
+```
