@@ -22,6 +22,11 @@ The installer is unable to automatically update your system PATH. Please add
 
 Now we need to point it to correct Python installation. Assuming you use [Anaconda](https://www.anaconda.com/products/individual):
 
+PowerShell (Windows):
+```shell
+$CLOUDSDK_PYTHON='~/Anaconda3/python'
+```
+
 ```bash
 export CLOUDSDK_PYTHON=~/Anaconda3/python
 ```
@@ -42,16 +47,22 @@ gsutil 5.5
 * Download the key and put it to some location, e.g. `.gc/ny-rides.json`
 * Set `GOOGLE_APPLICATION_CREDENTIALS` to point to the file
 
+PowerShell (Windows):
+```shell
+$GOOGLE_APPLICATION_CREDENTIALS='[insert path here]...\data-engineering-zoomcamp\week_1_basics_n_setup\1_terraform_gcp\.gcp\ny-taxi-rides.json'
+```
+
 ```bash
-export GOOGLE_APPLICATION_CREDENTIALS=~/.gc/ny-rides.json
+export GOOGLE_APPLICATION_CREDENTIALS=~/.gcp/ny-taxi-rides.json
 ```
 
 Now authenticate: 
 
 ```bash
-gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
 ```
 
+Simpler approach:
 Alternatively, you can authenticate using OAuth like shown in the video
 
 ```bash

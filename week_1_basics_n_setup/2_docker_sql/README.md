@@ -35,7 +35,7 @@ Troubleshooting
 
 If you have the following error:
 
-```
+```bash
 docker run -it ^
   -e POSTGRES_USER="root" ^
   -e POSTGRES_PASSWORD="root" ^
@@ -275,7 +275,7 @@ services:
 ### SQL 
 
 1. Combine the trips and zones data to collect details about trips and their pickup and dropoff locations.
-```
+```sql
 SELECT 
   trips.tpep_pickup_datetime
   , trips.tpep_dropoff_datetime
@@ -299,7 +299,7 @@ LIMIT 100
 Note that this does not use a left join and will not account for any discrepancies between the zones in the trips table and the zones in the zones table.
 
 2. Validate data integrity by checking if there are any zones in the trips data that are not in the zones data. 
-```
+```sql
 SELECT 
   trips.tpep_pickup_datetime
   , trips.tpep_dropoff_datetime
@@ -316,7 +316,7 @@ WHERE
 ;
 ```
 
-```
+```sql
 SELECT 
   trips.tpep_pickup_datetime
   , trips.tpep_dropoff_datetime
@@ -334,7 +334,7 @@ WHERE
 ```
 
 3. Return the trip counts by date.
-```
+```sql
 SELECT
   CAST(tpep_dropoff_datetime AS DATE) AS date
   , COUNT(*) AS trips
@@ -347,7 +347,7 @@ ORDER BY
 ```
 
 What if we wanted to return the specific zones and metric associated?
-```
+```sql
 SELECT
   CAST(trips.tpep_dropoff_datetime AS DATE) date
   , trips."DOLocationID"
