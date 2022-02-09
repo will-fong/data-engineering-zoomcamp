@@ -59,6 +59,48 @@ default_args = {
     "retries": 1,
 }
 
+# For zones we will be reusing these steps so let's define a function
+def download_parquetize_upload_dag(
+    dag
+    , url_template
+    , local_csv_path_template
+    , local_parquet_path_template
+    , gcs_path_template
+):
+
+    with dag:
+        download_dataset_task = BashOperator(
+            task_id="download_dataset_task",
+            bash_command=f"curl -sSLf {url_template} > {local_csv_path_template}"
+        )
+
+        format_to_parquet_task = PythonOperator(
+            task_id="format_to_parquet_task",
+            python_callable=format_to_parquet,
+            op_kwargs={
+                "src_file": local_csv_path_template,
+                "dest_file": local_parquet_path_template
+            },
+        )
+
+        # TODO: Homework - research and try XCOM to communicate output values between 2 tasks/operators
+        local_to_gcs_task = PythonOperator(
+            task_id="local_to_gcs_task",
+            python_callable=upload_to_gcs,
+            op_kwargs={
+                "bucket": BUCKET,
+                "object_name": gcs_path_template,
+                "local_file": local_parquet_path_template,
+            },
+        )
+
+        remove_dataset_task = BashOperator(
+            task_id="remove_dataset_task",
+            bash_command=f"rm {url_template} {local_parquet_path_template}"
+        )    
+
+        download_dataset_task >> format_to_parquet_task >> local_to_gcs_task >> remove_dataset_task
+
 
 # In order to iterate through the data files, we start by setting the base URL
 URL_PREFIX = 'https://s3.amazonaws.com/nyc-tlc/trip+data'
@@ -69,8 +111,7 @@ YELLOW_TAXI_CSV_FILE_TEMPLATE = AIRFLOW_HOME + '/yellow_tripdata_{{ execution_da
 YELLOW_TAXI_PARQUET_FILE_TEMPLATE = AIRFLOW_HOME + '/yellow_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.parquet'
 YELLOW_TAXI_GCS_PATH_TEMPLATE = "raw/yellow_tripdata/{{ execution_date.strftime(\'%Y\') }}/{{ execution_date.strftime(\'%Y-%m\') }}.parquet"
 
-# NOTE: DAG declaration - using a Context Manager (an implicit way)
-with DAG(
+yellow_taxi_data_dag = DAG(
     dag_id="yellow_taxi_data_ingestion_gcs_dag",
     schedule_interval="0 6 2 * *",
     start_date=datetime(2019, 1, 1),
@@ -78,51 +119,12 @@ with DAG(
     catchup=True,
     max_active_runs=3,
     tags=['dtc-de'],
-) as yellow_taxi_data_dag:
+)
 
-    download_dataset_task = BashOperator(
-        task_id="download_dataset_task",
-        bash_command=f"curl -sSLf {YELLOW_TAXI_URL_TEMPLATE} > {YELLOW_TAXI_CSV_FILE_TEMPLATE}"
-    )
-
-    format_to_parquet_task = PythonOperator(
-        task_id="format_to_parquet_task",
-        python_callable=format_to_parquet,
-        op_kwargs={
-            "src_file": YELLOW_TAXI_CSV_FILE_TEMPLATE,
-            "dest_file": YELLOW_TAXI_PARQUET_FILE_TEMPLATE
-        },
-    )
-
-    # TODO: Homework - research and try XCOM to communicate output values between 2 tasks/operators
-    local_to_gcs_task = PythonOperator(
-        task_id="local_to_gcs_task",
-        python_callable=upload_to_gcs,
-        op_kwargs={
-            "bucket": BUCKET,
-            "object_name": YELLOW_TAXI_GCS_PATH_TEMPLATE,
-            "local_file": YELLOW_TAXI_PARQUET_FILE_TEMPLATE,
-        },
-    )
-
-    remove_dataset_task = BashOperator(
-        task_id="remove_dataset_task",
-        bash_command=f"rm {YELLOW_TAXI_URL_TEMPLATE} {YELLOW_TAXI_PARQUET_FILE_TEMPLATE}"
-    )    
-
-    # bigquery_external_table_task = BigQueryCreateExternalTableOperator(
-    #     task_id="bigquery_external_table_task",
-    #     table_resource={
-    #         "tableReference": {
-    #             "projectId": PROJECT_ID,
-    #             "datasetId": BIGQUERY_DATASET,
-    #             "tableId": "external_table",
-    #         },
-    #         "externalDataConfiguration": {
-    #             "sourceFormat": "PARQUET",
-    #             "sourceUris": [f"gs://{BUCKET}/raw/{parquet_file}"],
-    #         },
-    #     },
-    # )
-
-    download_dataset_task >> format_to_parquet_task >> local_to_gcs_task >> remove_dataset_task
+download_parquetize_upload_dag(
+    dag=yellow_taxi_data_dag
+    , url_template=YELLOW_TAXI_URL_TEMPLATE
+    , local_csv_path_template=YELLOW_TAXI_CSV_FILE_TEMPLATE
+    , local_parquet_path_template=YELLOW_TAXI_PARQUET_FILE_TEMPLATE
+    , gcs_path_template=YELLOW_TAXI_GCS_PATH_TEMPLATE
+)
