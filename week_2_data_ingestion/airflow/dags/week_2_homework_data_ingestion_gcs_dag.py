@@ -96,7 +96,7 @@ def download_parquetize_upload_dag(
 
         remove_dataset_task = BashOperator(
             task_id="remove_dataset_task",
-            bash_command=f"rm {url_template} {local_parquet_path_template}"
+            bash_command=f"rm {local_csv_path_template} {local_parquet_path_template}"
         )    
 
         download_dataset_task >> format_to_parquet_task >> local_to_gcs_task >> remove_dataset_task
