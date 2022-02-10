@@ -105,15 +105,15 @@ def download_parquetize_upload_dag(
 # In order to iterate through the data files, we start by setting the base URL
 URL_PREFIX = 'https://s3.amazonaws.com/nyc-tlc/trip+data'
 
-# For observability we append the execution time
-YELLOW_TAXI_URL_TEMPLATE = URL_PREFIX + '/yellow_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.csv'
-YELLOW_TAXI_CSV_FILE_TEMPLATE = AIRFLOW_HOME + '/yellow_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.csv'
-YELLOW_TAXI_PARQUET_FILE_TEMPLATE = AIRFLOW_HOME + '/yellow_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.parquet'
-YELLOW_TAXI_GCS_PATH_TEMPLATE = "raw/yellow_tripdata/{{ execution_date.strftime(\'%Y\') }}/{{ execution_date.strftime(\'%Y-%m\') }}.parquet"
+# We could repeat with green taxi data and follow the predefined format
+GREEN_TAXI_URL_TEMPLATE = URL_PREFIX + '/green_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.csv'
+GREEN_TAXI_CSV_FILE_TEMPLATE = AIRFLOW_HOME + '/green_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.csv'
+GREEN_TAXI_PARQUET_FILE_TEMPLATE = AIRFLOW_HOME + '/green_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.parquet'
+GREEN_TAXI_GCS_PATH_TEMPLATE = "raw/green_tripdata/{{ execution_date.strftime(\'%Y\') }}/{{ execution_date.strftime(\'%Y-%m\') }}.parquet"
 
-yellow_taxi_data_dag = DAG(
-    dag_id="yellow_taxi_data_ingestion_gcs_dag",
-    schedule_interval="0 6 2 * *",
+green_taxi_data_dag = DAG(
+    dag_id="green_taxi_data_ingestion_gcs_dag",
+    schedule_interval="0 7 2 * *",
     start_date=datetime(2019, 1, 1),
     default_args=default_args,
     catchup=True,
@@ -122,9 +122,9 @@ yellow_taxi_data_dag = DAG(
 )
 
 download_parquetize_upload_dag(
-    dag=yellow_taxi_data_dag
-    , url_template=YELLOW_TAXI_URL_TEMPLATE
-    , local_csv_path_template=YELLOW_TAXI_CSV_FILE_TEMPLATE
-    , local_parquet_path_template=YELLOW_TAXI_PARQUET_FILE_TEMPLATE
-    , gcs_path_template=YELLOW_TAXI_GCS_PATH_TEMPLATE
+    dag=green_taxi_data_dag
+    , url_template=GREEN_TAXI_URL_TEMPLATE
+    , local_csv_path_template=GREEN_TAXI_CSV_FILE_TEMPLATE
+    , local_parquet_path_template=GREEN_TAXI_PARQUET_FILE_TEMPLATE
+    , gcs_path_template=GREEN_TAXI_GCS_PATH_TEMPLATE
 )

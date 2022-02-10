@@ -74,6 +74,21 @@ It could be a bash operator that runs this command:
 rm name-of-csv-file.csv name-of-parquet-file.parquet
 ```
 
+For issues that occur with the initial run from the Airflow UI, you will need to access the Airflow webserver container and backfill
+
+```bash
+docker exec -it [container id] bash
+```
+
+```bash
+airflow dags backfill yellow_taxi_data_ingestion_gcs_dag --reset-dagruns -s 2019-01-01 -e 2021-01-01
+```
+
+```bash
+airflow dags backfill green_taxi_data_ingestion_gcs_dag --reset-dagruns -s 2019-01-01 -e 2021-01-01
+```
+
+You may use the UI to click the DAGs that failed and click clear.  The CLI will ask if you would like to delete the tasks (e.g. if your 2019 January, Feburary, and March DAGs failed then the CLI would list 12 tasks) and you will enter `No`
 
 ## Question 3: DAG for FHV Data (2 points)
 
