@@ -3,8 +3,8 @@
 In this homework, we'll prepare data for the next week. We'll need
 to put these datasets to our data lake:
 
-* For the lessons, we'll need the Yellow taxi dataset (years 2019 and 2020)
-* For the homework, we'll need FHV Data (for-hire vehicles, for 2019 only)
+For the lessons, we'll need the Yellow taxi dataset. For the homework 
+of week 3, we'll need FHV Data (for-hire vehicles, for 2019 only).
 
 You can find all the URLs on [the dataset page](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
 
@@ -66,8 +66,7 @@ To make it fail on 404, add the `-f` flag:
 curl -sSLf { URL } > { LOCAL_PATH }
 ```
 
-When you run this for all the data, the temporary files will be saved in Docker and will consume your 
-disk space. If it causes problems for you, add another step in your DAG that cleans everything up.
+When you run this for all the data, the temporary files will be saved in Docker and will consume your disk space. If it causes problems for you, add another step in your DAG that cleans everything up.
 It could be a bash operator that runs this command:
 
 ```bash
@@ -106,6 +105,12 @@ If you don't have a GCP account, for local ingestion you'll need two steps:
 * Ingest to Postgres
 
 Use the same frequency and the start date as for the yellow taxi dataset
+
+Similary, for issues that occur with the initial run from the Airflow UI, you will need to access the Airflow webserver container and backfill
+
+```bash
+airflow dags backfill fhv_taxi_data_ingestion_gcs_dag --reset-dagruns -s 2020-01-01 -e 2021-01-01
+```
 
 Question: how many DAG runs are green for data in 2019 after finishing everything? 
 

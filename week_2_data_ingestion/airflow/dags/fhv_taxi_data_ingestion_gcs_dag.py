@@ -9,18 +9,12 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 
 from google.cloud import storage
-from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateExternalTableOperator
 import pyarrow.csv as pv
 import pyarrow.parquet as pq
 
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
 BUCKET = os.environ.get("GCP_GCS_BUCKET")
 AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow/")
-
-# dataset_file = "yellow_tripdata_2021-01.csv"
-# dataset_url = f"https://s3.amazonaws.com/nyc-tlc/trip+data/{dataset_file}"
-# parquet_file = dataset_file.replace('.csv', '.parquet')
-# BIGQUERY_DATASET = os.environ.get("BIGQUERY_DATASET", 'trips_data_all')
 
 def format_to_parquet(src_file, dest_file):
     if not src_file.endswith('.csv'):
@@ -54,7 +48,10 @@ def upload_to_gcs(bucket, object_name, local_file):
 
 default_args = {
     "owner": "airflow",
-    "start_date": days_ago(1),
+    # "start_date": datetime(2019, 1, 1),
+    # When triggering the DAG manually, the DAG run parameters are not passed in and as such the default start date argument is used, which does not produce the correct output.  Attempts to trigger with config from the UI were also unsuccessful as Airflow expects a string in their JSON config format (e.g. {"key": "value"}) while a datetime is needed.
+    # "start_date": days_ago(1),
+    "end_date": datetime(2021, 1, 1),
     "depends_on_past": False,
     "retries": 1,
 }
@@ -105,7 +102,6 @@ def download_parquetize_upload_dag(
 # In order to iterate through the data files, we start by setting the base URL
 URL_PREFIX = 'https://nyc-tlc.s3.amazonaws.com/trip+data'
 
-# We could repeat with green taxi data and follow the predefined format
 FHV_TAXI_URL_TEMPLATE = URL_PREFIX + '/fhv_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.csv'
 FHV_TAXI_CSV_FILE_TEMPLATE = AIRFLOW_HOME + '/fhv_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.csv'
 FHV_TAXI_PARQUET_FILE_TEMPLATE = AIRFLOW_HOME + '/fhv_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.parquet'
