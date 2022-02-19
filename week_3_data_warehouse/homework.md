@@ -7,6 +7,25 @@ We will use all the knowledge learned in this week. Please answer your questions
 **What is count for fhv vehicles data for year 2019**  
 Can load the data for cloud storage and run a count(*)
 
+```sql
+-- Creating external table referring to gcs path with parquet
+CREATE OR REPLACE EXTERNAL TABLE `positive-leaf-340006.trips_data_all.external_fhv_tripdata`
+OPTIONS (
+  format = 'parquet',
+  uris = ['gs://dtc_data_lake_positive-leaf-340006/raw/fhv_tripdata/2019/2019-*.parquet'
+  , 'gs://dtc_data_lake_positive-leaf-340006/raw/fhv_tripdata/2020/2020-*.parquet']
+);
+```
+
+```sql
+-- Check yellow trip data
+SELECT 
+    COUNT(*) 
+FROM positive-leaf-340006.trips_data_all.external_fhv_tripdata 
+WHERE tpep_pickup_datetime LIKE '%2019%'
+;
+```
+
 ### Question 2: 
 **How many distinct dispatching_base_num we have in fhv for 2019**  
 Can run a distinct query on the table from question 1
@@ -26,7 +45,7 @@ actual data processed can be found after the query is executed.
 ### Question 5: 
 **What will be the best partitioning or clustering strategy when filtering on dispatching_base_num and SR_Flag**  
 Review partitioning and clustering video. 
-Partitioning cannot be created on all data types.
+Clustering cannot be created on all data types.
 
 ### Question 6: 
 **What improvements can be seen by partitioning and clustering for data size less than 1 GB**  

@@ -7,8 +7,8 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from google.cloud import storage
 
-PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "pivotal-surfer-336713")
-BUCKET = os.environ.get("GCP_GCS_BUCKET", "dtc_data_lake_pivotal-surfer-336713")
+PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "positive-leaf-340006")
+BUCKET = os.environ.get("GCP_GCS_BUCKET", "dtc_data_lake_positive-leaf-340006")
 
 dataset_file = "yellow_tripdata_2021-01.csv"
 dataset_url = f"https://s3.amazonaws.com/nyc-tlc/trip+data/{dataset_file}"

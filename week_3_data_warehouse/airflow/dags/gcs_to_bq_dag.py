@@ -54,17 +54,19 @@ with DAG(
                 },
                 "externalDataConfiguration": {
                     "autodetect": "True",
-                    "sourceFormat": f"{INPUT_FILETYPE.upper()}",
+                    "sourceFormat": f"{INPUT_FILETYPE}",
                     "sourceUris": [f"gs://{BUCKET}/{colour}/*"],
                 },
             },
         )
 
+        # ehail_fee is not loaded due to the following error - google.api_core.exceptions.BadRequest: 400 Error while reading table: trips_data_all.green_tripdata_external_table, error message: Parquet column 'ehail_fee' has type DOUBLE which does not match the target cpp_type INT64.
         CREATE_BQ_TBL_QUERY = (
             f"CREATE OR REPLACE TABLE {BIGQUERY_DATASET}.{colour}_{DATASET} \
             PARTITION BY DATE({ds_col}) \
             AS \
-            SELECT * FROM {BIGQUERY_DATASET}.{colour}_{DATASET}_external_table;"
+            SELECT * EXCEPT (ehail_fee) FROM {BIGQUERY_DATASET}.{colour}_{DATASET}_external_table;"
+            # SELECT * FROM {BIGQUERY_DATASET}.{colour}_{DATASET}_external_table;"
         )
 
         # Create a partitioned table from external table
