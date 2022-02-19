@@ -33,6 +33,10 @@
 
 ### [Workshop](airflow.md)
 
+Note that this is required to complete prior to the homework as the external tables in BigQuery were not set up after running the Airflow DAGs in Week 2.
+
+Alternatively, you can copy the gcs_to_bq.py script to the Airflow folder in Week 2 and run it to create the tables in BigQuery.
+
 - [Integrating Bigquery with Airflow (+ Week 2 Review) - Video](https://www.youtube.com/watch?v=lAxAhHNeGww&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=31)
 
 - Setup:
