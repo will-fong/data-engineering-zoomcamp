@@ -4,10 +4,12 @@ with trips_data as (
     select * from {{ ref('fact_trips') }}
 )
     select 
-    -- Reveneue grouping 
+    -- Revenue grouping 
     pickup_zone as revenue_zone,
-    date_trunc('month', pickup_datetime) as revenue_month, 
-    --Note: For BQ use instead: date_trunc(pickup_datetime, month) as revenue_month, 
+    -- Note: For PG use
+    -- date_trunc('month', pickup_datetime) as revenue_month, 
+    -- Note: For BQ use
+    date_trunc(pickup_datetime, month) as revenue_month, 
 
     service_type, 
 
