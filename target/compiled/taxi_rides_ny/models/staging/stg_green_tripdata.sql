@@ -1,8 +1,14 @@
 
 
-
 select
     -- identifiers
+    to_hex(md5(cast(coalesce(cast(vendorid as 
+    string
+), '') || '-' || coalesce(cast(lpep_pickup_datetime as 
+    string
+), '') as 
+    string
+))) as tripid,
     cast(vendorid as integer) as vendorid,
     cast(ratecodeid as integer) as ratecodeid,
     cast(pulocationid as integer) as  pickup_locationid,
@@ -24,6 +30,7 @@ select
     cast(mta_tax as numeric) as mta_tax,
     cast(tip_amount as numeric) as tip_amount,
     cast(tolls_amount as numeric) as tolls_amount,
+    -- cast(ehail_fee as numeric) as ehail_fee,
     cast(improvement_surcharge as numeric) as improvement_surcharge,
     cast(total_amount as numeric) as total_amount,
     cast(payment_type as integer) as payment_type,
@@ -37,4 +44,10 @@ select
     end as payment_type_description,
     cast(congestion_surcharge as numeric) as congestion_surcharge
 from `positive-leaf-340006`.`trips_data_all`.`green_tripdata`
-limit 100
+
+
+-- dbt build --m <model.sql> --var 'is_test_run: false'
+
+
+  limit 100
+
