@@ -1,0 +1,5 @@
+packages:
+    - git: "https://github.com/dbt-labs/dbt-utils.git"
+      revision: 0.8.0
+    # - package: dbt-labs/dbt-utils
+    #   version: 0.8.0
