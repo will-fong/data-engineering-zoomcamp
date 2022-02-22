@@ -12,7 +12,7 @@ Ensure Brew and Java installed in your system:
 ```bash
 xcode-select –install
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-brew cask install java
+brew install java
 ```
 
 
@@ -36,7 +36,7 @@ Add the following environment variables to your `.bash_profile` or `.zshrc`
 
 ```bash
 export SPARK_HOME=/usr/local/Cellar/apache-spark/3.2.1/libexec
-export PATH="$SPARK_HOME/bin/:$PATH
+export PATH="$SPARK_HOME/bin/:$PATH"
 ```
 
 
