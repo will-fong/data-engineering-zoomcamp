@@ -24,7 +24,8 @@ wget https://nyc-tlc.s3.amazonaws.com/trip+data/fhvhv_tripdata_2021-02.csv
 ```
 
 Read it with Spark using the same schema as we did 
-in the lessons. 
+in the lessons. We will use this dataset for all
+the remaining questions.
 
 Repartition it to 24 partitions and save it to
 parquet.
@@ -84,7 +85,7 @@ And how many stages your spark job has?
 
 ## Submitting the solutions
 
-* Form for submitting: TBA
+* Form for submitting: https://forms.gle/dBkVK9yT8cSMDwuw7
 * You can submit your homework multiple times. In this case, only the last submission will be used. 
 
 Deadline: 02 March (Wednesday), 22:00 CET
